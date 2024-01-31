@@ -22,7 +22,8 @@ namespace LegacyApp.UnitTests
                     ClientStatus = ClientStatus.none
                 });
 
-            _timeProvider.Now.Returns(DateTime.Now);
+            var timeFreeze = new DateTime(2024, 1, 1);
+            _timeProvider.Now.Returns(timeFreeze);
 
             _sut = new UserService(_clientRepository, _userCreditService, _userRepository, _timeProvider);
         }
