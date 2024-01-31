@@ -4,78 +4,83 @@ namespace LegacyApp
 {
     public class UserService
     {
-        public bool AddUser(string firname, string surname, string email, DateTime dateOfBirth, int clientId)
+        private readonly IClientRepository _clientRepository;
+        private readonly IUserCreditService _userCreditService;
+        private readonly IUserRepository _userRepository;
+        private readonly ITimeProvider _timeProvider;
+
+        public UserService() : this(new ClientRepository(), new UserCreditServiceClient(), new UserRepository(), new TimeProvider())
         {
-            if (string.IsNullOrEmpty(firname) || string.IsNullOrEmpty(surname))
+        }
+
+        public UserService(IClientRepository clientRepository, IUserCreditService userCreditService, IUserRepository userRepository, ITimeProvider timeProvider)
+        {
+            _clientRepository = clientRepository ?? throw new ArgumentNullException(nameof(clientRepository));
+            _userCreditService = userCreditService ?? throw new ArgumentNullException(nameof(userCreditService));
+            _userRepository = userRepository ?? throw new ArgumentNullException(nameof(userRepository));
+            _timeProvider = timeProvider ?? throw new ArgumentNullException(nameof(timeProvider));
+        }
+
+        public bool AddUser(string firstname, string surname, string email, DateTime dateOfBirth, int clientId)
+        {
+            if (FirstNameOrLastNameIsNullOrEmpty(firstname, surname))
             {
                 return false;
             }
 
-            if (email.Contains("@") && !email.Contains("."))
+            if (!EmailIsValid(email))
             {
                 return false;
             }
 
-            var now = DateTime.Now;
-            int age = now.Year - dateOfBirth.Year;
-
-            if (now.Month < dateOfBirth.Month || (now.Month == dateOfBirth.Month && now.Day < dateOfBirth.Day))
-            {
-                age--;
-            }
-
+            int age = GetCurrentAge(dateOfBirth);
             if (age < 21)
             {
                 return false;
             }
 
-            var clientRepository = new ClientRepository();
-            var client = clientRepository.GetById(clientId);
-
+            var client = _clientRepository.GetById(clientId);
+            var creditLimit = _userCreditService.GetCreditLimit(firstname, surname, dateOfBirth);
             var user = new User
             {
                 Client = client,
                 DateOfBirth = dateOfBirth,
                 EmailAddress = email,
-                Firstname = firname,
-                Surname = surname
+                Firstname = firstname,
+                Surname = surname,
+                CreditLimit = creditLimit,
+                HasCreditLimit = client.Name != ClientNameConstants.VeryImportantClient,
             };
 
-            if (client.Name == "VeryImportantClient")
+            if (client.Name == ClientNameConstants.ImportantClient)
             {
-                // Skip credit chek
-                user.HasCreditLimit = false;
-            }
-            else if (client.Name == "ImportantClient")
-            {
-                // Do credit check and double credit limit
-                user.HasCreditLimit = true;
-                using (var userCreditService = new UserCreditServiceClient())
-                {
-                    var creditLimit = userCreditService.GetCreditLimit(user.Firstname, user.Surname, user.DateOfBirth);
-                    creditLimit = creditLimit * 2;
-                    user.CreditLimit = creditLimit;
-                }
-            }
-            else
-            {
-                // Do credit check
-                user.HasCreditLimit = true;
-                using (var userCreditService = new UserCreditServiceClient())
-                {
-                    var creditLimit = userCreditService.GetCreditLimit(user.Firstname, user.Surname, user.DateOfBirth);
-                    user.CreditLimit = creditLimit;
-                }
+                user.CreditLimit *= 2;
             }
 
-            if (user.HasCreditLimit && user.CreditLimit < 500)
-            {
-                return false;
-            }
-            
-            UserDataAccess.AddUser(user);
+            _userRepository.AddUser(user);
 
             return true;
+        }
+
+        private static bool FirstNameOrLastNameIsNullOrEmpty(string firstname, string surname)
+        {
+            return string.IsNullOrEmpty(firstname) || string.IsNullOrEmpty(surname);
+        }
+
+        private static bool EmailIsValid(string email)
+        {
+            return email.Contains("@") && email.Contains(".");
+        }
+
+        private int GetCurrentAge(DateTime dateOfBirth)
+        {
+            var now = _timeProvider.Now;
+            int age = now.Year - dateOfBirth.Year;
+
+            if (now.Month < dateOfBirth.Month || (now.Month == dateOfBirth.Month && now.Day < dateOfBirth.Day))
+                age--;
+
+            return age;
         }
     }
 }

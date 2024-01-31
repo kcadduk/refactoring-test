@@ -1,8 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
+# 
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LegacyApp.Consumer", "LegacyApp.Consumer\LegacyApp.Consumer.csproj", "{CA784960-75EE-4EB6-808A-A54BAE4A72C5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LegacyApp", "LegacyApp\LegacyApp.csproj", "{C0E35137-EE80-4AC9-96E3-E927718A6FAB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LegacyApp.Tests", "LegacyApp.Tests\LegacyApp.Tests.csproj", "{B90E3BD9-CA2C-475B-99F9-D5DF364C9977}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LegacyApp.UnitTests", "LegacyApp.UnitTests\LegacyApp.UnitTests.csproj", "{EA12C454-7065-4E0A-9649-9AF2D15C89A7}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -18,5 +23,13 @@ Global
 		{C0E35137-EE80-4AC9-96E3-E927718A6FAB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C0E35137-EE80-4AC9-96E3-E927718A6FAB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C0E35137-EE80-4AC9-96E3-E927718A6FAB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B90E3BD9-CA2C-475B-99F9-D5DF364C9977}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B90E3BD9-CA2C-475B-99F9-D5DF364C9977}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B90E3BD9-CA2C-475B-99F9-D5DF364C9977}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B90E3BD9-CA2C-475B-99F9-D5DF364C9977}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EA12C454-7065-4E0A-9649-9AF2D15C89A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EA12C454-7065-4E0A-9649-9AF2D15C89A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EA12C454-7065-4E0A-9649-9AF2D15C89A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EA12C454-7065-4E0A-9649-9AF2D15C89A7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
